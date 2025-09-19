@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline Litigation Companion</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      --bg: #f4f6fb;
+      --fg: #1f2933;
+      --primary: #1849c6;
+      --accent: #f29d4b;
+      --card: #ffffff;
+      --border: #d1d9e6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.6rem;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    nav button {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+
+    nav button:hover,
+    nav button:focus {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    main {
+      padding: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 3px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    form {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    input[type="time"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font: inherit;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button,
+    .button {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.15s ease-in-out, box-shadow 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    button.secondary,
+    .button.secondary {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: rgba(24, 73, 198, 0.08);
+      color: var(--primary);
+    }
+
+    .tag {
+      background: rgba(24, 73, 198, 0.12);
+      color: var(--primary);
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.3rem;
+    }
+
+    .list {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.08);
+      font-size: 0.8rem;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    progress {
+      width: 100%;
+      height: 0.6rem;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .subtle {
+      color: #52606d;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        position: static;
+      }
+
+      nav {
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Offline Litigation Companion</h1>
+    <nav id="nav"></nav>
+  </header>
+  <main>
+    <section id="matter-management">
+      <h2>Matter Management</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>New Matter</h3>
+          <form id="matter-form">
+            <div>
+              <label for="matter-name">Matter Name</label>
+              <input id="matter-name" required />
+            </div>
+            <div>
+              <label for="matter-court">Court</label>
+              <input id="matter-court" required />
+            </div>
+            <div>
+              <label for="matter-case-number">Case Number</label>
+              <input id="matter-case-number" required />
+            </div>
+            <div>
+              <label for="matter-parties">Parties</label>
+              <textarea id="matter-parties" placeholder="Plaintiff vs Defendant"></textarea>
+            </div>
+            <div>
+              <label for="matter-counsel">Counsel / Opponent</label>
+              <textarea id="matter-counsel" placeholder="Your team, Opposing counsel"></textarea>
+            </div>
+            <div>
+              <label for="matter-stage">Stage</label>
+              <select id="matter-stage">
+                <option>Pleadings</option>
+                <option>Evidence</option>
+                <option>Arguments</option>
+                <option>Judgment</option>
+                <option>Execution</option>
+              </select>
+            </div>
+            <div>
+              <label for="matter-tags">Tags</label>
+              <input id="matter-tags" placeholder="urgent, arbitration" />
+            </div>
+            <button type="submit">Save Matter</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Search & Filter</h3>
+          <div class="grid">
+            <div>
+              <label for="matter-search">Search</label>
+              <input id="matter-search" placeholder="Name, court, party" />
+            </div>
+            <div>
+              <label for="stage-filter">Stage</label>
+              <select id="stage-filter">
+                <option value="">All</option>
+                <option>Pleadings</option>
+                <option>Evidence</option>
+                <option>Arguments</option>
+                <option>Judgment</option>
+                <option>Execution</option>
+              </select>
+            </div>
+          </div>
+          <div id="matter-list" class="list" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calendar">
+      <h2>Calendar &amp; Limitation</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Schedule</h3>
+          <form id="event-form">
+            <div>
+              <label for="event-matter">Matter</label>
+              <select id="event-matter"></select>
+            </div>
+            <div>
+              <label for="event-type">Type</label>
+              <select id="event-type">
+                <option>Hearing</option>
+                <option>Deadline</option>
+                <option>Task</option>
+              </select>
+            </div>
+            <div class="grid two">
+              <div>
+                <label for="event-date">Date</label>
+                <input id="event-date" type="date" required />
+              </div>
+              <div>
+                <label for="event-time">Time</label>
+                <input id="event-time" type="time" />
+              </div>
+            </div>
+            <div>
+              <label for="event-note">Note</label>
+              <textarea id="event-note"></textarea>
+            </div>
+            <button type="submit">Save Event</button>
+          </form>
+          <div class="subtle" id="notification-status"></div>
+        </div>
+        <div class="card">
+          <h3>Upcoming</h3>
+          <div id="event-list" class="list"></div>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Limitation Calculator</h3>
+          <form id="limitation-form">
+            <div>
+              <label for="limitation-matter">Matter</label>
+              <select id="limitation-matter"></select>
+            </div>
+            <div>
+              <label for="limitation-start">Start Date</label>
+              <input id="limitation-start" type="date" required />
+            </div>
+            <div>
+              <label for="limitation-days">Limitation (days)</label>
+              <input id="limitation-days" type="number" required min="1" />
+            </div>
+            <button type="submit">Compute</button>
+          </form>
+          <div id="limitation-result" class="card" style="background: rgba(24,73,198,0.06);"></div>
+        </div>
+        <div class="card">
+          <h3>Court Holidays</h3>
+          <ul id="holiday-list"></ul>
+        </div>
+      </div>
+    </section>
+    <section id="evidence">
+      <h2>Evidence &amp; Documents</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Add Evidence</h3>
+          <form id="evidence-form">
+            <div>
+              <label for="evidence-matter">Matter</label>
+              <select id="evidence-matter"></select>
+            </div>
+            <div>
+              <label for="evidence-title">Title</label>
+              <input id="evidence-title" required />
+            </div>
+            <div>
+              <label for="evidence-type">Exhibit Side</label>
+              <select id="evidence-type">
+                <option value="P">Plaintiff</option>
+                <option value="D">Defendant</option>
+              </select>
+            </div>
+            <div>
+              <label for="evidence-file">Upload (PDF/Image)</label>
+              <input id="evidence-file" type="file" accept="application/pdf,image/*" />
+            </div>
+            <div>
+              <label for="evidence-notes">Notes</label>
+              <textarea id="evidence-notes"></textarea>
+            </div>
+            <button type="submit">Save Evidence</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Repository</h3>
+          <div id="evidence-list" class="list"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Bundle Builder</h3>
+        <form id="bundle-form">
+          <div>
+            <label for="bundle-matter">Matter</label>
+            <select id="bundle-matter"></select>
+          </div>
+          <div>
+            <label>Choose Exhibits</label>
+            <div id="bundle-documents" class="list"></div>
+          </div>
+          <div>
+            <label for="bundle-title">Bundle Title</label>
+            <input id="bundle-title" placeholder="Hearing Bundle" />
+          </div>
+          <button type="submit">Build Bundle</button>
+        </form>
+        <div id="bundle-list" class="list"></div>
+      </div>
+    </section>
+
+    <section id="hearing-prep">
+      <h2>Hearing Preparation</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Hearing Notebook</h3>
+          <form id="notebook-form">
+            <div>
+              <label for="notebook-matter">Matter</label>
+              <select id="notebook-matter"></select>
+            </div>
+            <div>
+              <label for="notebook-facts">Facts</label>
+              <textarea id="notebook-facts"></textarea>
+            </div>
+            <div>
+              <label for="notebook-issues">Issues</label>
+              <textarea id="notebook-issues"></textarea>
+            </div>
+            <div>
+              <label for="notebook-reliefs">Reliefs</label>
+              <textarea id="notebook-reliefs"></textarea>
+            </div>
+            <div>
+              <label for="notebook-authorities">Authorities</label>
+              <textarea id="notebook-authorities"></textarea>
+            </div>
+            <button type="submit">Save Notebook</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Authorities Library</h3>
+          <form id="authority-form">
+            <div>
+              <label for="authority-title">Title</label>
+              <input id="authority-title" required />
+            </div>
+            <div>
+              <label for="authority-citation">Citation</label>
+              <input id="authority-citation" placeholder="(2017) 3 SCC 123" />
+            </div>
+            <div>
+              <label for="authority-notes">Pinned Paragraphs / Headnotes</label>
+              <textarea id="authority-notes"></textarea>
+            </div>
+            <button type="submit">Save Authority</button>
+          </form>
+          <div id="authority-list" class="list"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Pre-hearing Checklist</h3>
+        <div id="checklist"></div>
+      </div>
+    </section>
+    <section id="hearing-day">
+      <h2>Hearing Day Tools</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Cause List</h3>
+          <form id="cause-form">
+            <div>
+              <label for="cause-date">Date</label>
+              <input id="cause-date" type="date" />
+            </div>
+            <div>
+              <label for="cause-body">Paste Cause List (one matter per line)</label>
+              <textarea id="cause-body" placeholder="Item 12 - Smith v. Doe - Court 3"></textarea>
+            </div>
+            <button type="submit">Save Cause List</button>
+          </form>
+          <div id="cause-list" class="list"></div>
+        </div>
+        <div class="card">
+          <h3>Live Note-taking</h3>
+          <form id="note-form">
+            <div>
+              <label for="note-matter">Matter</label>
+              <select id="note-matter"></select>
+            </div>
+            <div>
+              <label for="note-text">Note</label>
+              <textarea id="note-text"></textarea>
+            </div>
+            <button type="submit">Add Note</button>
+          </form>
+          <div id="note-list" class="list"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Order Draft Capture</h3>
+        <form id="order-draft-form">
+          <div class="grid two">
+            <div>
+              <label for="order-matter">Matter</label>
+              <select id="order-matter"></select>
+            </div>
+            <div>
+              <label for="order-outcome">Outcome</label>
+              <select id="order-outcome">
+                <option>Adjourned</option>
+                <option>Part-heard</option>
+                <option>Arguments</option>
+                <option>Orders Reserved</option>
+                <option>Disposed</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label for="order-summary">Order Summary</label>
+            <textarea id="order-summary"></textarea>
+          </div>
+          <button type="submit">Save Order Note</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="orders">
+      <h2>Orders &amp; Compliance</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Upload Order</h3>
+          <form id="order-form">
+            <div>
+              <label for="final-order-matter">Matter</label>
+              <select id="final-order-matter"></select>
+            </div>
+            <div>
+              <label for="order-file">Order File</label>
+              <input id="order-file" type="file" accept="application/pdf,image/*" />
+            </div>
+            <div>
+              <label for="order-notes">Notes</label>
+              <textarea id="order-notes"></textarea>
+            </div>
+            <button type="submit">Save Order</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Compliance Tasks</h3>
+          <form id="task-form">
+            <div>
+              <label for="task-matter">Matter</label>
+              <select id="task-matter"></select>
+            </div>
+            <div>
+              <label for="task-title">Task</label>
+              <input id="task-title" required />
+            </div>
+            <div>
+              <label for="task-due">Due Date</label>
+              <input id="task-due" type="date" />
+            </div>
+            <button type="submit">Add Task</button>
+          </form>
+          <div id="task-list" class="list"></div>
+        </div>
+      </div>
+    </section>
+    <section id="drafting">
+      <h2>Drafting Tools</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Templates</h3>
+          <div>
+            <label for="template-matter">Auto-fill From Matter</label>
+            <select id="template-matter"></select>
+          </div>
+          <div id="template-list" class="list"></div>
+        </div>
+        <div class="card">
+          <h3>Clause Snippets</h3>
+          <div id="snippet-list" class="list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="research">
+      <h2>Research &amp; Notes</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Research Notebook</h3>
+          <form id="research-form">
+            <div>
+              <label for="research-matter">Linked Matter (optional)</label>
+              <select id="research-matter">
+                <option value="">General</option>
+              </select>
+            </div>
+            <div>
+              <label for="research-title">Title</label>
+              <input id="research-title" required />
+            </div>
+            <div>
+              <label for="research-content">Notes / Citations</label>
+              <textarea id="research-content"></textarea>
+            </div>
+            <button type="submit">Save Research Note</button>
+          </form>
+          <div id="research-list" class="list"></div>
+        </div>
+        <div class="card">
+          <h3>Offline Citation Checker</h3>
+          <form id="citation-form">
+            <div>
+              <label for="citation-input">Citation</label>
+              <input id="citation-input" placeholder="AIR 1996 SC 1234" />
+            </div>
+            <button type="submit">Validate</button>
+          </form>
+          <div id="citation-result"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="communication">
+      <h2>Client Communication (Offline Drafts)</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Draft Update</h3>
+          <form id="communication-form">
+            <div>
+              <label for="communication-matter">Matter</label>
+              <select id="communication-matter"></select>
+            </div>
+            <div>
+              <label for="communication-channel">Channel</label>
+              <select id="communication-channel">
+                <option>SMS</option>
+                <option>WhatsApp</option>
+                <option>Email</option>
+              </select>
+            </div>
+            <div>
+              <label for="communication-body">Message</label>
+              <textarea id="communication-body"></textarea>
+            </div>
+            <button type="submit">Queue Draft</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Consent &amp; Draft Outbox</h3>
+          <form id="consent-form">
+            <div>
+              <label for="consent-client">Client Name</label>
+              <input id="consent-client" required />
+            </div>
+            <div>
+              <label for="consent-channel">Preferred Channel</label>
+              <select id="consent-channel">
+                <option>SMS</option>
+                <option>WhatsApp</option>
+                <option>Email</option>
+                <option>Phone</option>
+              </select>
+            </div>
+            <button type="submit">Save Consent</button>
+          </form>
+          <div id="consent-list" class="list"></div>
+          <div id="draft-list" class="list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <h2>Time &amp; Billing</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Offline Timers</h3>
+          <form id="timer-form">
+            <div>
+              <label for="timer-matter">Matter</label>
+              <select id="timer-matter"></select>
+            </div>
+            <button type="submit">Start Timer</button>
+          </form>
+          <div id="timer-list" class="list"></div>
+        </div>
+        <div class="card">
+          <h3>Time Entries &amp; Draft Invoices</h3>
+          <form id="time-entry-form">
+            <div>
+              <label for="time-matter">Matter</label>
+              <select id="time-matter"></select>
+            </div>
+            <div class="grid two">
+              <div>
+                <label for="time-hours">Hours</label>
+                <input id="time-hours" type="number" step="0.1" />
+              </div>
+              <div>
+                <label for="time-rate">Rate</label>
+                <input id="time-rate" type="number" step="0.1" />
+              </div>
+            </div>
+            <div>
+              <label for="time-desc">Description</label>
+              <textarea id="time-desc"></textarea>
+            </div>
+            <button type="submit">Save Entry</button>
+          </form>
+          <div id="invoice-list" class="list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "offline-litigation";
+    const DEFAULT_STATE = {
+      matters: [],
+      events: [],
+      documents: [],
+      bundles: [],
+      notebooks: [],
+      authorities: [],
+      checklist: [
+        { id: "bundle", label: "Bundle printed & paginated", done: false },
+        { id: "authority", label: "Authorities clipped & highlighted", done: false },
+        { id: "notes", label: "Issues & reliefs reviewed", done: false },
+        { id: "client", label: "Client update drafted", done: false }
+      ],
+      causeLists: [],
+      notes: [],
+      orderDrafts: [],
+      orders: [],
+      tasks: [],
+      templates: [
+        {
+          id: "ws",
+          title: "Written Statement",
+          body:
+            "IN THE {court}\n\nWritten Statement on behalf of {defendant}\n\n1. Preliminary Submissions..."
+        },
+        {
+          id: "plaint",
+          title: "Plaint",
+          body:
+            "IN THE COURT OF {court}\n\nSuit No. {caseNumber}\n\nBetween {plaintiff} and {defendant}\n\nMost Respectfully Showeth:"
+        },
+        {
+          id: "ia",
+          title: "Interlocutory Application",
+          body:
+            "APPLICATION UNDER ORDER XXXIX RULES 1 & 2 CPC\n\nIn the matter of {matterName}\n\nThe Applicant states as follows:"
+        }
+      ],
+      snippets: [
+        {
+          id: "interim",
+          label: "Interim Relief Clause",
+          text:
+            "Pending disposal of the suit, it is prayed that this Hon'ble Court be pleased to grant an ad-interim order of status quo with respect to the schedule property."
+        },
+        {
+          id: "service",
+          label: "Service Undertaking",
+          text:
+            "The Plaintiff undertakes to serve copies of this application and all annexures on the Defendant within 48 hours."
+        },
+        {
+          id: "compliance",
+          label: "Compliance Statement",
+          text:
+            "The Defendant has complied with the order dated {orderDate} by filing the requisite affidavit of disclosure."
+        }
+      ],
+      researchNotes: [],
+      citationHistory: [],
+      communications: [],
+      consents: [],
+      timeEntries: [],
+      timers: {},
+      bates: { P: 1, D: 1 },
+      holidays: [
+        "2024-01-26",
+        "2024-03-25",
+        "2024-08-15",
+        "2024-10-02",
+        "2024-12-25"
+      ]
+    };
+
+    let state = loadState();
+    const navItems = [
+      { id: "matter-management", label: "Matters" },
+      { id: "calendar", label: "Calendar" },
+      { id: "evidence", label: "Evidence" },
+      { id: "hearing-prep", label: "Preparation" },
+      { id: "hearing-day", label: "Hearing Day" },
+      { id: "orders", label: "Orders" },
+      { id: "drafting", label: "Drafting" },
+      { id: "research", label: "Research" },
+      { id: "communication", label: "Communication" },
+      { id: "billing", label: "Billing" }
+    ];
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return structuredClone(DEFAULT_STATE);
+        const parsed = JSON.parse(raw);
+        return { ...structuredClone(DEFAULT_STATE), ...parsed };
+      } catch (error) {
+        console.error("Failed to load state", error);
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function $(selector) {
+      return document.querySelector(selector);
+    }
+
+    function formatDate(date) {
+      if (!date) return "";
+      const d = new Date(date);
+      return d.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    }
+
+    function formatDateTime(date, time) {
+      if (!date) return "";
+      const iso = time ? `${date}T${time}` : `${date}T00:00`;
+      const d = new Date(iso);
+      return d.toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+    function renderNav() {
+      const nav = document.getElementById("nav");
+      nav.innerHTML = "";
+      navItems.forEach(({ id, label }) => {
+        const button = document.createElement("button");
+        button.textContent = label;
+        button.addEventListener("click", () => {
+          document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+        });
+        nav.appendChild(button);
+      });
+    }
+
+    function refreshMatterOptions() {
+      const selects = [
+        "#event-matter",
+        "#limitation-matter",
+        "#evidence-matter",
+        "#bundle-matter",
+        "#notebook-matter",
+        "#note-matter",
+        "#order-matter",
+        "#final-order-matter",
+        "#task-matter",
+        "#template-matter",
+        "#research-matter",
+        "#communication-matter",
+        "#timer-matter",
+        "#time-matter"
+      ].map($);
+      selects.forEach((select) => {
+        if (!select) return;
+        const currentValue = select.value;
+        select.innerHTML = "";
+        if (select.id === "research-matter") {
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = "General";
+          select.appendChild(opt);
+        }
+        state.matters.forEach((matter) => {
+          const option = document.createElement("option");
+          option.value = matter.id;
+          option.textContent = `${matter.name} (${matter.court})`;
+          select.appendChild(option);
+        });
+        if (currentValue) {
+          select.value = currentValue;
+        }
+      });
+    }
+
+    function renderMatters() {
+      refreshMatterOptions();
+      const query = $("#matter-search").value.toLowerCase();
+      const stageFilter = $("#stage-filter").value;
+      const container = $("#matter-list");
+      container.innerHTML = "";
+
+      const matters = state.matters.filter((matter) => {
+        const haystack = [
+          matter.name,
+          matter.court,
+          matter.caseNumber,
+          matter.parties,
+          matter.counsel
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        const matchesQuery = !query || haystack.includes(query);
+        const matchesStage = !stageFilter || matter.stage === stageFilter;
+        return matchesQuery && matchesStage;
+      });
+
+      if (!matters.length) {
+        container.innerHTML = `<p class="subtle">No matters match the filter.</p>`;
+        return;
+      }
+
+      matters.forEach((matter) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <header style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+            <div>
+              <h3 style="margin:0;">${matter.name}</h3>
+              <div class="subtle">${matter.court} · ${matter.caseNumber}</div>
+            </div>
+            <span class="pill">${matter.stage}</span>
+          </header>
+          <p><strong>Parties:</strong> ${matter.parties || "-"}</p>
+          <p><strong>Counsel:</strong> ${matter.counsel || "-"}</p>
+          <div>${matter.tags
+            .map((tag) => `<span class="tag">${tag}</span>`)
+            .join(" ")}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+    function renderEvents() {
+      const container = $("#event-list");
+      container.innerHTML = "";
+      const events = [...state.events].sort((a, b) => a.date.localeCompare(b.date));
+      if (!events.length) {
+        container.innerHTML = `<p class="subtle">No scheduled events yet.</p>`;
+        return;
+      }
+      events.forEach((event) => {
+        const matter = state.matters.find((m) => m.id === event.matterId);
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h4 style="margin:0;">${event.type} · ${formatDateTime(event.date, event.time)}</h4>
+          <div class="subtle">${matter ? matter.name : "Unlinked"}</div>
+          <p>${event.note || ""}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderHolidays() {
+      const list = $("#holiday-list");
+      list.innerHTML = "";
+      state.holidays
+        .slice()
+        .sort()
+        .forEach((holiday) => {
+          const li = document.createElement("li");
+          li.textContent = `${formatDate(holiday)}`;
+          list.appendChild(li);
+        });
+    }
+
+    function renderEvidence() {
+      const container = $("#evidence-list");
+      container.innerHTML = "";
+      if (!state.documents.length) {
+        container.innerHTML = `<p class="subtle">No evidence saved.</p>`;
+        return;
+      }
+      state.documents.forEach((doc) => {
+        const matter = state.matters.find((m) => m.id === doc.matterId);
+        const article = document.createElement("article");
+        article.className = "card";
+        const downloadLink = doc.data
+          ? `<a class="button secondary" href="${doc.data}" download="${doc.title}">Download</a>`
+          : "";
+        article.innerHTML = `
+          <header style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
+            <div>
+              <h4 style="margin:0;">${doc.exhibitLabel} · ${doc.title}</h4>
+              <div class="subtle">${matter ? matter.name : "Unlinked"}</div>
+            </div>
+            <div>${downloadLink}</div>
+          </header>
+          <p>${doc.notes || ""}</p>
+          <details>
+            <summary>OCR Text</summary>
+            <pre style="white-space:pre-wrap;">${doc.ocrText || "No OCR yet."}</pre>
+          </details>
+        `;
+        const ocrButton = document.createElement("button");
+        ocrButton.textContent = "Run Local OCR";
+        ocrButton.className = "secondary";
+        ocrButton.addEventListener("click", () => runOCR(doc.id));
+        article.appendChild(ocrButton);
+        container.appendChild(article);
+      });
+      renderBundlePicker();
+    }
+    async function runOCR(docId) {
+      const doc = state.documents.find((d) => d.id === docId);
+      if (!doc || !doc.data) {
+        alert("Upload required for OCR.");
+        return;
+      }
+      if (window.TextDetector) {
+        try {
+          const response = await fetch(doc.data);
+          const blob = await response.blob();
+          const bitmap = await createImageBitmap(blob);
+          const detector = new window.TextDetector();
+          const results = await detector.detect(bitmap);
+          doc.ocrText = results.map((r) => r.rawValue).join("\n");
+          saveState();
+          renderEvidence();
+          return;
+        } catch (error) {
+          console.warn("TextDetector failed", error);
+        }
+      }
+      const manual = prompt(
+        "Automatic OCR unsupported. Paste manual transcription for " + doc.title,
+        doc.ocrText || ""
+      );
+      if (manual !== null) {
+        doc.ocrText = manual;
+        saveState();
+        renderEvidence();
+      }
+    }
+
+    function renderBundlePicker() {
+      const container = $("#bundle-documents");
+      const selectedMatter = $("#bundle-matter").value;
+      container.innerHTML = "";
+      state.documents
+        .filter((doc) => !selectedMatter || doc.matterId === selectedMatter)
+        .forEach((doc) => {
+          const label = document.createElement("label");
+          label.style.display = "block";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = doc.id;
+          label.appendChild(checkbox);
+          label.append(` ${doc.exhibitLabel} - ${doc.title}`);
+          container.appendChild(label);
+        });
+    }
+
+    function renderBundles() {
+      const container = $("#bundle-list");
+      container.innerHTML = "";
+      if (!state.bundles.length) {
+        container.innerHTML = `<p class="subtle">No bundles created yet.</p>`;
+        return;
+      }
+      state.bundles.forEach((bundle) => {
+        const matter = state.matters.find((m) => m.id === bundle.matterId);
+        const div = document.createElement("div");
+        div.className = "card";
+        const docList = bundle.documentIds
+          .map((id, idx) => {
+            const doc = state.documents.find((d) => d.id === id);
+            return `${idx + 1}. ${doc ? doc.exhibitLabel + " " + doc.title : id}`;
+          })
+          .join("\n");
+        const bundleBlob = new Blob(
+          [
+            `${bundle.title}\nMatter: ${matter ? matter.name : ""}\nCreated: ${new Date(
+              bundle.createdAt
+            ).toLocaleString()}\n\nIndex:\n${docList}`
+          ],
+          { type: "text/plain" }
+        );
+        const url = URL.createObjectURL(bundleBlob);
+        div.innerHTML = `
+          <h4 style="margin:0;">${bundle.title}</h4>
+          <div class="subtle">${matter ? matter.name : "Unlinked"}</div>
+          <pre style="white-space:pre-wrap;">${docList}</pre>
+          <a class="button" href="${url}" download="${bundle.title.replace(/\s+/g, "_")}.txt">Download Bundle Index</a>
+        `;
+        container.appendChild(div);
+      });
+    }
+    function renderNotebook() {
+      const matterId = $("#notebook-matter").value;
+      const note = state.notebooks.find((n) => n.matterId === matterId);
+      $("#notebook-facts").value = note?.facts || "";
+      $("#notebook-issues").value = note?.issues || "";
+      $("#notebook-reliefs").value = note?.reliefs || "";
+      $("#notebook-authorities").value = note?.authorities || "";
+    }
+
+    function renderAuthorities() {
+      const list = $("#authority-list");
+      list.innerHTML = "";
+      if (!state.authorities.length) {
+        list.innerHTML = `<p class="subtle">No authorities saved.</p>`;
+        return;
+      }
+      state.authorities.forEach((auth) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h4 style="margin:0;">${auth.title}</h4>
+          <div class="subtle">${auth.citation || ""}</div>
+          <p>${auth.notes || ""}</p>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function renderChecklist() {
+      const container = $("#checklist");
+      container.innerHTML = "";
+      state.checklist.forEach((item) => {
+        const label = document.createElement("label");
+        label.style.display = "flex";
+        label.style.alignItems = "center";
+        label.style.gap = "0.5rem";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = item.done;
+        checkbox.addEventListener("change", () => {
+          item.done = checkbox.checked;
+          saveState();
+        });
+        label.appendChild(checkbox);
+        label.append(item.label);
+        container.appendChild(label);
+      });
+    }
+    function renderCauseLists() {
+      const container = $("#cause-list");
+      container.innerHTML = "";
+      state.causeLists.forEach((cause) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h4 style="margin:0;">${formatDate(cause.date)}</h4>
+          <ul>${cause.items
+            .map(
+              (item) =>
+                `<li>${item.text} — <strong>${item.outcome || "Pending"}</strong></li>`
+            )
+            .join("")}</ul>
+        `;
+        cause.items.forEach((item, idx) => {
+          const select = document.createElement("select");
+          ["Pending", "Adjourned", "Argued", "Disposed"].forEach((status) => {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            if (status === item.outcome) option.selected = true;
+            select.appendChild(option);
+          });
+          select.addEventListener("change", () => {
+            item.outcome = select.value;
+            saveState();
+            renderCauseLists();
+          });
+          const li = div.querySelectorAll("li")[idx];
+          li.appendChild(document.createTextNode(" "));
+          li.appendChild(select);
+        });
+        container.appendChild(div);
+      });
+    }
+
+    function renderNotes() {
+      const container = $("#note-list");
+      container.innerHTML = "";
+      const notes = state.notes
+        .slice()
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .slice(0, 20);
+      notes.forEach((note) => {
+        const matter = state.matters.find((m) => m.id === note.matterId);
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <div class="subtle">${new Date(note.createdAt).toLocaleTimeString()}</div>
+          <h4 style="margin:0;">${matter ? matter.name : "Unlinked"}</h4>
+          <p>${note.text}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+    function renderOrders() {
+      const container = $("#task-list");
+      container.innerHTML = "";
+      state.tasks.forEach((task) => {
+        const matter = state.matters.find((m) => m.id === task.matterId);
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h4 style="margin:0;">${task.title}</h4>
+          <div class="subtle">${matter ? matter.name : ""}</div>
+          <div>Due: ${formatDate(task.dueDate) || "No due date"}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderOrderDrafts() {
+      const container = $("#order-draft-form").nextElementSibling;
+      if (!container) return;
+      container.innerHTML = "";
+      state.orderDrafts
+        .slice()
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .forEach((draft) => {
+          const matter = state.matters.find((m) => m.id === draft.matterId);
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <h4 style="margin:0;">${matter ? matter.name : "Unlinked"}</h4>
+            <div class="subtle">${draft.outcome}</div>
+            <p>${draft.summary}</p>
+          `;
+          container.appendChild(div);
+        });
+    }
+    function renderTemplates() {
+      const container = $("#template-list");
+      container.innerHTML = "";
+      const matterId = $("#template-matter").value;
+      const matter = state.matters.find((m) => m.id === matterId);
+      state.templates.forEach((tpl) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        const body = fillTemplate(tpl.body, matter);
+        const blob = new Blob([body], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        div.innerHTML = `
+          <h4 style="margin:0;">${tpl.title}</h4>
+          <pre style="white-space:pre-wrap;">${body}</pre>
+          <a class="button" href="${url}" download="${tpl.title.replace(/\s+/g, "_")}.txt">Download</a>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function fillTemplate(text, matter) {
+      if (!matter) return text;
+      return text
+        .replaceAll("{matterName}", matter.name)
+        .replaceAll("{court}", matter.court)
+        .replaceAll("{caseNumber}", matter.caseNumber)
+        .replaceAll("{plaintiff}", matter.parties?.split(" vs ")[0] || "Plaintiff")
+        .replaceAll(
+          "{defendant}",
+          matter.parties?.split(" vs ")[1] || matter.parties?.split(" v.")[1] || "Defendant"
+        )
+        .replaceAll("{orderDate}", new Date().toLocaleDateString());
+    }
+    function renderSnippets() {
+      const container = $("#snippet-list");
+      container.innerHTML = "";
+      state.snippets.forEach((snippet) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        const button = document.createElement("button");
+        button.textContent = "Copy";
+        button.addEventListener("click", () => {
+          navigator.clipboard.writeText(snippet.text);
+          button.textContent = "Copied!";
+          setTimeout(() => (button.textContent = "Copy"), 1500);
+        });
+        div.innerHTML = `
+          <h4 style="margin:0;">${snippet.label}</h4>
+          <pre style="white-space:pre-wrap;">${snippet.text}</pre>
+        `;
+        div.appendChild(button);
+        container.appendChild(div);
+      });
+    }
+
+    function renderResearch() {
+      const container = $("#research-list");
+      container.innerHTML = "";
+      state.researchNotes
+        .slice()
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .forEach((note) => {
+          const matter = state.matters.find((m) => m.id === note.matterId);
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <h4 style="margin:0;">${note.title}</h4>
+            <div class="subtle">${matter ? matter.name : "General"}</div>
+            <p>${note.content}</p>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function renderCitationHistory() {
+      const container = $("#citation-result");
+      container.innerHTML = state.citationHistory
+        .slice()
+        .reverse()
+        .map(
+          (entry) =>
+            `<div class="card"><strong>${entry.value}</strong><br/><span class="subtle">${
+              entry.status
+            }</span></div>`
+        )
+        .join("");
+    }
+    function renderCommunications() {
+      const consentContainer = $("#consent-list");
+      consentContainer.innerHTML = "";
+      state.consents.forEach((consent) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h4 style="margin:0;">${consent.client}</h4>
+          <div class="subtle">Preferred: ${consent.channel}</div>
+        `;
+        consentContainer.appendChild(div);
+      });
+
+      const draftContainer = $("#draft-list");
+      draftContainer.innerHTML = "";
+      state.communications
+        .slice()
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .forEach((draft) => {
+          const matter = state.matters.find((m) => m.id === draft.matterId);
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <h4 style="margin:0;">${matter ? matter.name : "Unlinked"}</h4>
+            <div class="subtle">${draft.channel} draft</div>
+            <p>${draft.body}</p>
+          `;
+          draftContainer.appendChild(div);
+        });
+    }
+    function renderTimers() {
+      const container = $("#timer-list");
+      container.innerHTML = "";
+      Object.entries(state.timers).forEach(([id, timer]) => {
+        const matter = state.matters.find((m) => m.id === timer.matterId);
+        const div = document.createElement("div");
+        div.className = "card";
+        const elapsed = timer.running
+          ? Date.now() - timer.startedAt + timer.elapsed
+          : timer.elapsed;
+        const hours = (elapsed / 3600000).toFixed(2);
+        const button = document.createElement("button");
+        button.textContent = timer.running ? "Stop" : "Resume";
+        button.addEventListener("click", () => toggleTimer(id));
+        const saveButton = document.createElement("button");
+        saveButton.textContent = "Log Entry";
+        saveButton.className = "secondary";
+        saveButton.addEventListener("click", () => saveTimerEntry(id));
+        div.innerHTML = `
+          <h4 style="margin:0;">${matter ? matter.name : "Unlinked"}</h4>
+          <div class="subtle">${hours} hrs</div>
+        `;
+        div.appendChild(button);
+        div.appendChild(saveButton);
+        container.appendChild(div);
+      });
+    }
+
+    function renderInvoices() {
+      const container = $("#invoice-list");
+      container.innerHTML = "";
+      if (!state.timeEntries.length) {
+        container.innerHTML = `<p class="subtle">No time entries yet.</p>`;
+        return;
+      }
+      const grouped = state.timeEntries.reduce((acc, entry) => {
+        acc[entry.matterId] = acc[entry.matterId] || [];
+        acc[entry.matterId].push(entry);
+        return acc;
+      }, {});
+      Object.entries(grouped).forEach(([matterId, entries]) => {
+        const matter = state.matters.find((m) => m.id === matterId);
+        const total = entries.reduce((sum, e) => sum + e.hours * e.rate, 0);
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h4 style="margin:0;">${matter ? matter.name : "Unlinked"}</h4>
+          <div class="subtle">Draft Invoice Total: ₹${total.toFixed(2)}</div>
+          <ul>${entries
+            .map(
+              (entry) =>
+                `<li>${formatDate(entry.date)} - ${entry.hours}h @ ₹${entry.rate} · ${entry.description}</li>`
+            )
+            .join("")}</ul>
+        `;
+        container.appendChild(div);
+      });
+    }
+    function toggleTimer(id) {
+      const timer = state.timers[id];
+      if (!timer) return;
+      if (timer.running) {
+        timer.elapsed += Date.now() - timer.startedAt;
+        timer.running = false;
+      } else {
+        timer.startedAt = Date.now();
+        timer.running = true;
+      }
+      saveState();
+      renderTimers();
+    }
+
+    function saveTimerEntry(id) {
+      const timer = state.timers[id];
+      if (!timer) return;
+      const elapsedHours = ((timer.running ? Date.now() - timer.startedAt : 0) + timer.elapsed) /
+        3600000;
+      const rate = Number(prompt("Billing rate?", "5000")) || 0;
+      state.timeEntries.push({
+        id: crypto.randomUUID(),
+        matterId: timer.matterId,
+        hours: Number(elapsedHours.toFixed(2)),
+        rate,
+        description: "Timer captured work",
+        date: new Date().toISOString().slice(0, 10)
+      });
+      delete state.timers[id];
+      saveState();
+      renderTimers();
+      renderInvoices();
+    }
+    function scheduleNotification(event) {
+      if (!("Notification" in window)) {
+        $("#notification-status").textContent =
+          "Notifications unsupported in this browser.";
+        return;
+      }
+      Notification.requestPermission().then((permission) => {
+        if (permission !== "granted") {
+          $("#notification-status").textContent =
+            "Notifications denied by user.";
+          return;
+        }
+        const eventTime = new Date(
+          `${event.date}T${event.time || "09:00"}`
+        ).getTime();
+        const delay = Math.max(eventTime - Date.now() - 300000, 0);
+        setTimeout(() => {
+          new Notification(`${event.type} reminder`, {
+            body: `${event.note || ""} (${formatDateTime(event.date, event.time)})`
+          });
+        }, delay);
+        $("#notification-status").textContent =
+          "Reminder scheduled locally (5 min prior).";
+      });
+    }
+    function addMatter(event) {
+      event.preventDefault();
+      const matter = {
+        id: crypto.randomUUID(),
+        name: $("#matter-name").value.trim(),
+        court: $("#matter-court").value.trim(),
+        caseNumber: $("#matter-case-number").value.trim(),
+        parties: $("#matter-parties").value.trim(),
+        counsel: $("#matter-counsel").value.trim(),
+        stage: $("#matter-stage").value,
+        tags: $("#matter-tags").value
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
+      };
+      state.matters.push(matter);
+      saveState();
+      event.target.reset();
+      renderMatters();
+    }
+
+    function addEvent(event) {
+      event.preventDefault();
+      const entry = {
+        id: crypto.randomUUID(),
+        matterId: $("#event-matter").value,
+        type: $("#event-type").value,
+        date: $("#event-date").value,
+        time: $("#event-time").value,
+        note: $("#event-note").value
+      };
+      state.events.push(entry);
+      saveState();
+      scheduleNotification(entry);
+      event.target.reset();
+      renderEvents();
+    }
+
+    function calculateLimitation(event) {
+      event.preventDefault();
+      const start = $("#limitation-start").value;
+      const days = Number($("#limitation-days").value);
+      const resultContainer = $("#limitation-result");
+      if (!start || !days) {
+        resultContainer.textContent = "Provide start date and days.";
+        return;
+      }
+      let remaining = days;
+      let current = new Date(start);
+      while (remaining > 0) {
+        current.setDate(current.getDate() + 1);
+        const iso = current.toISOString().slice(0, 10);
+        const isWeekend = current.getDay() === 0 || current.getDay() === 6;
+        const isHoliday = state.holidays.includes(iso);
+        if (isWeekend || isHoliday) continue;
+        remaining -= 1;
+      }
+      resultContainer.innerHTML = `
+        <strong>Limitation Ends:</strong> ${formatDate(current)}<br/>
+        <span class="subtle">(Excluding weekends & listed holidays)</span>
+      `;
+    }
+    async function addEvidence(event) {
+      event.preventDefault();
+      const matterId = $("#evidence-matter").value;
+      const fileInput = $("#evidence-file");
+      const file = fileInput.files[0];
+      let data = null;
+      if (file) {
+        data = await readFileAsDataURL(file);
+      }
+      const type = $("#evidence-type").value;
+      const label = `${type}-${state.bates[type]}`;
+      state.bates[type] += 1;
+      const doc = {
+        id: crypto.randomUUID(),
+        matterId,
+        title: $("#evidence-title").value.trim(),
+        notes: $("#evidence-notes").value.trim(),
+        exhibitLabel: label,
+        data,
+        ocrText: ""
+      };
+      state.documents.push(doc);
+      saveState();
+      event.target.reset();
+      renderEvidence();
+      renderBundles();
+    }
+
+    async function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    function addBundle(event) {
+      event.preventDefault();
+      const matterId = $("#bundle-matter").value;
+      const title = $("#bundle-title").value.trim() || "Bundle";
+      const selected = Array.from(
+        document.querySelectorAll('#bundle-documents input[type="checkbox"]:checked')
+      ).map((input) => input.value);
+      if (!selected.length) {
+        alert("Select at least one exhibit");
+        return;
+      }
+      state.bundles.push({
+        id: crypto.randomUUID(),
+        matterId,
+        title,
+        documentIds: selected,
+        createdAt: Date.now()
+      });
+      saveState();
+      event.target.reset();
+      renderBundles();
+    }
+
+    function saveNotebook(event) {
+      event.preventDefault();
+      const matterId = $("#notebook-matter").value;
+      const existing = state.notebooks.find((n) => n.matterId === matterId);
+      const notebook = {
+        matterId,
+        facts: $("#notebook-facts").value,
+        issues: $("#notebook-issues").value,
+        reliefs: $("#notebook-reliefs").value,
+        authorities: $("#notebook-authorities").value
+      };
+      if (existing) {
+        Object.assign(existing, notebook);
+      } else {
+        state.notebooks.push(notebook);
+      }
+      saveState();
+    }
+    function addAuthority(event) {
+      event.preventDefault();
+      state.authorities.push({
+        id: crypto.randomUUID(),
+        title: $("#authority-title").value.trim(),
+        citation: $("#authority-citation").value.trim(),
+        notes: $("#authority-notes").value.trim()
+      });
+      saveState();
+      event.target.reset();
+      renderAuthorities();
+    }
+
+    function saveChecklist(event) {
+      if (event.target.matches('#checklist input[type="checkbox"]')) {
+        const labels = Array.from(document.querySelectorAll('#checklist input'));
+        labels.forEach((input, index) => {
+          state.checklist[index].done = input.checked;
+        });
+        saveState();
+      }
+    }
+    function addCauseList(event) {
+      event.preventDefault();
+      const lines = $("#cause-body").value
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((text) => ({ text, outcome: "Pending" }));
+      state.causeLists.push({
+        id: crypto.randomUUID(),
+        date: $("#cause-date").value || new Date().toISOString().slice(0, 10),
+        items: lines
+      });
+      saveState();
+      event.target.reset();
+      renderCauseLists();
+    }
+
+    function addNote(event) {
+      event.preventDefault();
+      state.notes.push({
+        id: crypto.randomUUID(),
+        matterId: $("#note-matter").value,
+        text: $("#note-text").value,
+        createdAt: Date.now()
+      });
+      saveState();
+      event.target.reset();
+      renderNotes();
+    }
+    function addOrderDraft(event) {
+      event.preventDefault();
+      state.orderDrafts.push({
+        id: crypto.randomUUID(),
+        matterId: $("#order-matter").value,
+        outcome: $("#order-outcome").value,
+        summary: $("#order-summary").value,
+        createdAt: Date.now()
+      });
+      saveState();
+      event.target.reset();
+      renderOrderDrafts();
+    }
+
+    async function addOrder(event) {
+      event.preventDefault();
+      const file = $("#order-file").files[0];
+      const data = file ? await readFileAsDataURL(file) : null;
+      state.orders.push({
+        id: crypto.randomUUID(),
+        matterId: $("#final-order-matter").value,
+        notes: $("#order-notes").value,
+        data
+      });
+      saveState();
+      event.target.reset();
+    }
+
+    function addTask(event) {
+      event.preventDefault();
+      state.tasks.push({
+        id: crypto.randomUUID(),
+        matterId: $("#task-matter").value,
+        title: $("#task-title").value.trim(),
+        dueDate: $("#task-due").value
+      });
+      saveState();
+      event.target.reset();
+      renderOrders();
+    }
+    function addResearch(event) {
+      event.preventDefault();
+      state.researchNotes.push({
+        id: crypto.randomUUID(),
+        matterId: $("#research-matter").value || null,
+        title: $("#research-title").value,
+        content: $("#research-content").value,
+        createdAt: Date.now()
+      });
+      saveState();
+      event.target.reset();
+      renderResearch();
+    }
+
+    function validateCitation(event) {
+      event.preventDefault();
+      const value = $("#citation-input").value.trim();
+      if (!value) return;
+      const pattern = /^(AIR|SCC|SCR|ALL|DLT)\s+\d{4}\s+[A-Z]{1,3}\s+\d+/i;
+      const status = pattern.test(value)
+        ? "Format appears valid"
+        : "Format atypical — review before filing";
+      state.citationHistory.push({ value, status, checkedAt: Date.now() });
+      saveState();
+      renderCitationHistory();
+      event.target.reset();
+    }
+    function addCommunication(event) {
+      event.preventDefault();
+      state.communications.push({
+        id: crypto.randomUUID(),
+        matterId: $("#communication-matter").value,
+        channel: $("#communication-channel").value,
+        body: $("#communication-body").value,
+        createdAt: Date.now()
+      });
+      saveState();
+      event.target.reset();
+      renderCommunications();
+    }
+
+    function addConsent(event) {
+      event.preventDefault();
+      state.consents.push({
+        id: crypto.randomUUID(),
+        client: $("#consent-client").value,
+        channel: $("#consent-channel").value
+      });
+      saveState();
+      event.target.reset();
+      renderCommunications();
+    }
+    function startTimer(event) {
+      event.preventDefault();
+      const matterId = $("#timer-matter").value;
+      const id = crypto.randomUUID();
+      state.timers[id] = {
+        id,
+        matterId,
+        startedAt: Date.now(),
+        elapsed: 0,
+        running: true
+      };
+      saveState();
+      renderTimers();
+    }
+
+    function addTimeEntry(event) {
+      event.preventDefault();
+      state.timeEntries.push({
+        id: crypto.randomUUID(),
+        matterId: $("#time-matter").value,
+        hours: Number($("#time-hours").value || 0),
+        rate: Number($("#time-rate").value || 0),
+        description: $("#time-desc").value,
+        date: new Date().toISOString().slice(0, 10)
+      });
+      saveState();
+      event.target.reset();
+      renderInvoices();
+    }
+    function init() {
+      renderNav();
+      renderMatters();
+      renderEvents();
+      renderHolidays();
+      renderEvidence();
+      renderBundles();
+      renderNotebook();
+      renderAuthorities();
+      renderChecklist();
+      renderCauseLists();
+      renderNotes();
+      renderOrderDrafts();
+      renderTemplates();
+      renderSnippets();
+      renderResearch();
+      renderCitationHistory();
+      renderCommunications();
+      renderTimers();
+      renderInvoices();
+      renderOrders();
+
+      $("#matter-form").addEventListener("submit", addMatter);
+      $("#matter-search").addEventListener("input", renderMatters);
+      $("#stage-filter").addEventListener("change", renderMatters);
+      $("#event-form").addEventListener("submit", addEvent);
+      $("#limitation-form").addEventListener("submit", calculateLimitation);
+      $("#evidence-form").addEventListener("submit", addEvidence);
+      $("#bundle-form").addEventListener("submit", addBundle);
+      $("#bundle-matter").addEventListener("change", renderBundlePicker);
+      $("#notebook-form").addEventListener("submit", saveNotebook);
+      $("#notebook-matter").addEventListener("change", renderNotebook);
+      $("#authority-form").addEventListener("submit", addAuthority);
+      $("#checklist").addEventListener("change", saveChecklist);
+      $("#cause-form").addEventListener("submit", addCauseList);
+      $("#note-form").addEventListener("submit", addNote);
+      $("#order-draft-form").addEventListener("submit", addOrderDraft);
+      $("#order-form").addEventListener("submit", addOrder);
+      $("#task-form").addEventListener("submit", addTask);
+      $("#template-matter").addEventListener("change", renderTemplates);
+      $("#research-form").addEventListener("submit", addResearch);
+      $("#citation-form").addEventListener("submit", validateCitation);
+      $("#communication-form").addEventListener("submit", addCommunication);
+      $("#consent-form").addEventListener("submit", addConsent);
+      $("#timer-form").addEventListener("submit", startTimer);
+      $("#time-entry-form").addEventListener("submit", addTimeEntry);
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
